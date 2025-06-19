@@ -1,0 +1,15 @@
+Sub SaveChartAsImage()
+    Dim chartObj As ChartObject
+    Dim imgPath As String
+
+    ' 1. 첫 번째 차트를 가져옴 (숫자 인덱스로)
+    Set chartObj = ActiveSheet.ChartObjects(1)
+
+    ' 2. 바탕화면에 저장할 전체 경로
+    imgPath = "C:\Users\yache\Desktop\ChartImage.png"
+
+    ' 3. 차트를 이미지로 저장
+    chartObj.Chart.Export Filename:=imgPath, FilterName:="PNG"
+
+    MsgBox "차트가 바탕화면에 저장되었습니다!" & vbCrLf & imgPath
+End Sub
