@@ -1,39 +1,47 @@
-### Documentation is included in the Documentation folder ###
+# 외교부 레포트 자동화 프로그램
 
+> **외교부 월별 세출 집행 현황 데이터를 수집·가공하여 보고서를 생성하고 메일로 전송하는 자동화 프로그램입니다.**
 
-### REFrameWork Template ###
-**Robotic Enterprise Framework**
+<br>
 
-* Built on top of *Transactional Business Process* template
-* Uses *State Machine* layout for the phases of automation project
-* Offers high level logging, exception handling and recovery
-* Keeps external settings in *Config.xlsx* file and Orchestrator assets
-* Pulls credentials from Orchestrator assets and *Windows Credential Manager*
-* Gets transaction data from Orchestrator queue and updates back status
-* Takes screenshots in case of system exceptions
+## 기술 환경
 
+- UiPath Studio
+- Robotic Enterprise Framework (REFramework)
+- Excel, Web Automation
+- HTML Email, DataTable, Dictionary 등 활용
 
-### How It Works ###
+<br>
 
-1. **INITIALIZE PROCESS**
- + ./Framework/*InitiAllSettings* - Load configuration data from Config.xlsx file and from assets
- + ./Framework/*GetAppCredential* - Retrieve credentials from Orchestrator assets or local Windows Credential Manager
- + ./Framework/*InitiAllApplications* - Open and login to applications used throughout the process
+## 자동화 흐름 요약
 
-2. **GET TRANSACTION DATA**
- + ./Framework/*GetTransactionData* - Fetches transactions from an Orchestrator queue defined by Config("OrchestratorQueueName") or any other configured data source
+1. 템플릿을 복사하여 각 월에 대응하는 Excel 시트를 생성 (2024년 07월 ~ 2025년 03월)
+2. 외교부 홈페이지에서 월별 세출 집행 현황 데이터를 수집
+3. 검색어와 0원이 아닌 항목을 필터로 추출하여 메일 본문용 테이블로 구성
+4. 0원이 아닌 항목만 집계하여 각 월 시트에 저장
+5. 집계 기준에 대한 총합 금액 계산
+6. 전체 기간에 대한 총합 계산
+7. 월별 데이터를 기준으로 집행액 추이 선 그래프 생성
+8. 월별 데이터 정리 및 메일 본문 구성
+9. 메일 본문 작성 후 첨부 파일과 함께 전송
 
-3. **PROCESS TRANSACTION**
- + *Process* - Process trasaction and invoke other workflows related to the process being automated 
- + ./Framework/*SetTransactionStatus* - Updates the status of the processed transaction (Orchestrator transactions by default): Success, Business Rule Exception or System Exception
+<br>
 
-4. **END PROCESS**
- + ./Framework/*CloseAllApplications* - Logs out and closes applications used throughout the process
+## Workflow 구성
 
+- **Initialization** <br>
+  00\_Output Folder 초기화.xaml <br>
+  01\_초기 DT 생성.xaml <br>
+  02\_결과 파일 저장.xaml <br>
+  03\_결과 파일 초기 설정.xaml <br>
 
-### For New Project ###
+- **Process Transaction** <br>
+  04\_세출 집행 현황 DT 추출.xaml <br>
+  05\_세출 집행 현황 DT 가공.xaml <br>
+  06\_세출 집행 현황 DT 저장.xaml <br>
 
-1. Check the Config.xlsx file and add/customize any required fields and values
-2. Implement InitiAllApplications.xaml and CloseAllApplicatoins.xaml workflows, linking them in the Config.xlsx fields
-3. Implement GetTransactionData.xaml and SetTransactionStatus.xaml according to the transaction type being used (Orchestrator queues by default)
-4. Implement Process.xaml workflow and invoke other workflows related to the process being automated
+- **End Process** <br>
+  07\_집행액 총 집계.xaml <br>
+  08\_총합 DT 저장.xaml <br>
+  09\_Excel 보고서 스타일.xaml <br>
+  10\_메일 발송.xaml <br>
